@@ -130,7 +130,7 @@ python_version = "3.13"
 strict = true
 warn_unreachable = true
 enable_error_code = ["ignore-without-code", "possibly-undefined", "redundant-expr", "truthy-bool"]
-files = ["packages", "tests", "scripts"]
+files = ["packages", "tests", "tools", "scripts"]
 explicit_package_bases = true
 mypy_path = [
   "packages/shoalscope-core/src",
