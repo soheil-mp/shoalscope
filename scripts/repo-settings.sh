@@ -27,9 +27,9 @@ gh repo edit "${REPO}" \
 # REST API because `gh repo edit --enable-auto-merge` does not apply it on older gh versions.
 gh api -X PATCH "repos/${REPO}" --silent -F allow_auto_merge=true
 
-# Workflows get read-only tokens by default.
+# Workflows get read-only tokens by default, and may open pull requests (release-please).
 gh api -X PUT "repos/${REPO}/actions/permissions/workflow" --silent \
-  -f default_workflow_permissions=read -F can_approve_pull_request_reviews=false
+  -f default_workflow_permissions=read -F can_approve_pull_request_reviews=true
 
 # --- Labels used by issue forms and Renovate ---------------------------------------
 gh label create spike --repo "${REPO}" --force --color "5319e7" \
