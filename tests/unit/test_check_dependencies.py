@@ -63,6 +63,15 @@ def test_free_text_licence_is_mapped() -> None:
     assert licence_of(dist) == "Apache-2.0"
 
 
+def test_simplified_bsd_is_recognised() -> None:
+    dist = FakeDistribution([("Name", "x"), ("License", "Simplified BSD")])
+    assert licence_of(dist) == "BSD-2-Clause"
+
+
+def test_mit_cmu_is_permissive() -> None:
+    assert spdx_allowed("MIT-CMU")
+
+
 def test_classifier_is_used_as_last_resort() -> None:
     dist = FakeDistribution(
         [("Name", "x"), ("Classifier", "License :: OSI Approved :: MIT License")]

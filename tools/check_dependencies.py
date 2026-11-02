@@ -43,6 +43,7 @@ ALLOWED_SPDX = frozenset(
         "ISC",
         "MIT",
         "MIT-0",
+        "MIT-CMU",
         "MPL-2.0",
         "PSF-2.0",
         "Python-2.0",
@@ -71,6 +72,7 @@ ALIASES = {
     "mozilla public license 2.0 (mpl 2.0)": "MPL-2.0",
     "psf-2.0": "PSF-2.0",
     "python software foundation license": "PSF-2.0",
+    "simplified bsd": "BSD-2-Clause",
     "the unlicense (unlicense)": "Unlicense",
 }
 

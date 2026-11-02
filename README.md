@@ -6,8 +6,10 @@ metrics, using only physics and published rules. It runs as a production-style d
 small-data ingestion from public ocean archives, an edge node that works over a poor link, a
 versioned lakehouse, orchestration, data contracts and GitOps deployment.
 
-> **Status:** planning is complete (2 November 2026); product code starts with milestone M0.5.
-> The research, architecture, decisions and a 26-milestone roadmap are in this repository.
+> **Status:** the engineering foundations are complete (2 November 2026) and the walking
+> skeleton (milestone M1) is under way. The minimal simulator already writes EK80 raw files that
+> echopype reads, and calibrated target strengths come back within 0.005 dB of the inserted
+> values. Documentation: <https://soheil-mp.github.io/shoalscope/>.
 
 ## What it does
 
@@ -69,23 +71,26 @@ Choices and alternatives: [technology landscape](docs/research/03-technology-lan
 
 ## How to run it
 
-The platform is not built yet; the first runnable slice is milestone M1. What runs today:
+The platform is being built; the first runnable slice is milestone M1. What runs today needs
+[uv](https://docs.astral.sh/uv/) and [just](https://just.systems/) (`uv tool install rust-just`):
 
 ```sh
 git clone https://github.com/soheil-mp/shoalscope.git
 cd shoalscope
 
-# Read one ping of a live 500 MB OOI file with three range requests (standard library only)
-python3 examples/peek_raw_window.py
+just setup   # Python 3.13 workspace, dev tools and git hooks
+just check   # lint, import boundaries, dependency policy, strict types, tests
 
-# Repository checks (secret scanning, spelling, Markdown, commit messages)
-pipx install pre-commit   # or: uv tool install pre-commit
-pre-commit install --hook-type pre-commit --hook-type commit-msg
-pre-commit run --all-files
+# Read one ping of a live 500 MB OOI file with three range requests (standard library only)
+just peek
 
 # Preview how the roadmap maps to GitHub issues (dry run, needs the GitHub CLI)
-python3 scripts/sync_roadmap_issues.py
+just roadmap-sync
 ```
+
+`just check` includes the conformance tests: the simulator writes an EK80 file, echopype opens
+and calibrates it, and every inserted target strength must come back within one quantisation
+step. The [development setup tutorial](docs/tutorials/development-setup.md) explains each step.
 
 Once M1 lands, the whole slice will run with:
 

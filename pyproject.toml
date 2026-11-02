@@ -20,6 +20,7 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+  "echopype>=0.12",
   "hypothesis>=6.170",
   "import-linter>=2.15",
   "mypy>=2.4",
@@ -108,6 +109,9 @@ select = [
   "W",    # pycodestyle warnings
 ]
 
+# Physics notation in docstrings and comments: alpha, lambda, tau, sigma, rho, pi, Delta.
+allowed-confusables = ["α", "λ", "τ", "σ", "ρ", "π", "Δ"]
+
 [tool.ruff.lint.pydocstyle]
 convention = "google"
 
@@ -145,6 +149,11 @@ mypy_path = [
   "packages/shoalscope-api/src",
 ]
 
+# Scientific libraries without type information.
+[[tool.mypy.overrides]]
+module = ["echopype", "echopype.*", "pyarrow", "pyarrow.*"]
+ignore_missing_imports = true
+
 # --- pytest and coverage ----------------------------------------------------------------
 [tool.pytest.ini_options]
 minversion = "9.0"
@@ -152,7 +161,11 @@ testpaths = ["tests"]
 pythonpath = ["."]
 addopts = ["--import-mode=importlib", "--strict-markers", "--strict-config", "-ra"]
 xfail_strict = true
-filterwarnings = ["error"]
+filterwarnings = [
+  "error",
+  # Third-party warnings outside our control; each names its source. Remove when fixed upstream.
+  "ignore:The 'generic' unit for NumPy timedelta is deprecated:DeprecationWarning:flox.*",
+]
 markers = [
   "integration: needs external services such as containers",
   "e2e: runs end to end through the local stack",

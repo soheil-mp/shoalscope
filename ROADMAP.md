@@ -1,7 +1,8 @@
 # Roadmap
 
-> **Status (2026-11-02):** planning is complete: research, architecture and the first fourteen
-> ADRs are in [`docs/`](docs/). No product code exists yet. The next item is **M1.1**.
+> **Status (2026-11-02):** the engineering foundations (M0) are complete, and the walking
+> skeleton (M1) has started: the minimal simulator writes EK80 files that echopype reads and
+> calibrates back to the inserted target strengths. The next item is **M1.2**.
 
 Shoalscope is built in eight phases and 26 milestones. A thin end-to-end slice comes first
 (M1), and every later milestone deepens one stage of that slice, so the project works from
@@ -51,7 +52,7 @@ early on and gets better with each step.
 | | [M25 Documentation, write-up and 1.0](#m25--documentation-write-up-and-10) | 25 | v1.0.0 |
 | | **Total** | **916** | |
 
-**Done:** 41 h (M0.1–M0.12). **Open:** 875 h. With 15 % contingency, that is about 1,030 hours:
+**Done:** 45 h (M0.1–M0.12, M1.1). **Open:** 871 h. With 15 % contingency, that is about 1,030 hours:
 roughly nine to ten months at 25 hours a week.
 
 ### Indicative schedule
@@ -198,7 +199,7 @@ automatically.
 **Goal:** every stage exists in its simplest form and runs end to end on a laptop with one
 command, from synthetic raw bytes to a number in an API and a chart.
 
-- [ ] **M1.1** (4 h) Minimal simulator: one channel, a few point targets and Gaussian noise,
+- [x] **M1.1** (4 h) Minimal simulator: one channel, a few point targets and Gaussian noise,
   written as an EK80-style CW raw file that echopype opens; ground truth as Parquet.
 - [ ] **M1.2** (4 h) Minimal L0 → L2A: open the file with echopype, compute Sv with the file's
   calibration values, write the window to an Icechunk repository on local disk.
@@ -920,4 +921,4 @@ v1.0.0 is tagged with signed artefacts.
 | Date | Items | Hours | Notes |
 | :-- | :-- | --: | :-- |
 | 2026-11-02 | M0.1–M0.4 | 18 | Repository bootstrap, research, ADRs, architecture, roadmap, settings and issue sync |
-| 2026-11-02 | M0.5–M0.12 | 23 | Engineering foundations: workspace, tooling, CI, docs and release automation |
+| 2026-11-02 | M0.5–M0.12, M1.1 | 27 | Engineering foundations complete (workspace, tooling, CI, docs, releases); minimal EK80 simulator |
