@@ -1,0 +1,75 @@
+# --- Secrets and local configuration -------------------------------------
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.age
+!**/*.sops.*
+.netrc
+
+# --- Python ---------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.import_linter_cache/
+.hypothesis/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+.benchmarks/
+dist/
+build/
+site/
+
+# --- Node / web -----------------------------------------------------------
+node_modules/
+.pnpm-store/
+web/dist/
+playwright-report/
+test-results/
+
+# --- dbt and Dagster -------------------------------------------------------
+transform/target/
+transform/dbt_packages/
+transform/logs/
+.dagster/
+dagster_home/
+.tmp_dagster_home_*/
+
+# --- Data: never commit data; only tiny synthetic fixtures under tests/ ---
+data/
+!data/.gitkeep
+cache/
+*.raw
+*.idx
+*.bot
+*.evi
+*.nc
+*.zarr/
+*.icechunk/
+*.parquet
+*.duckdb
+*.duckdb.wal
+*.arrow
+!tests/fixtures/**
+
+# --- Infrastructure state -------------------------------------------------
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+.terraform.lock.hcl.bak
+kubeconfig*
+
+# --- Editors and OS -------------------------------------------------------
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.swp
+.DS_Store
