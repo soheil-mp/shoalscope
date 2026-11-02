@@ -1,6 +1,6 @@
 # Architecture
 
-> Target architecture for Shoalscope 1.0. The [roadmap](../ROADMAP.md) builds it in thin
+> Target architecture for Shoalscope 1.0. The [roadmap](https://github.com/soheil-mp/shoalscope/blob/main/ROADMAP.md) builds it in thin
 > slices; the [ADRs](adr/README.md) record why each part was chosen. Diagrams are Mermaid so
 > they render on GitHub and in the documentation site.
 

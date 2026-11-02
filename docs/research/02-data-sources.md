@@ -97,7 +97,7 @@ fixtures from source 6, and connector tests use a local fake server (M10.10).
   - one ping cycle (one second, three channels) is 32–39 KB: `MRU0`, two `XML0` ping
     parameters, `RAW4` and `RAW3`.
 - **Consequence:** a 60-second window is about 2 MB of a 500 MB file.
-  [`examples/peek_raw_window.py`](../../examples/peek_raw_window.py) reproduces this with three
+  [`examples/peek_raw_window.py`](https://github.com/soheil-mp/shoalscope/blob/main/examples/peek_raw_window.py) reproduces this with three
   range requests (index, header, one ping), 67,612 bytes in total. Shoalscope reads the index, then fetches only the byte ranges it
   needs ([ADR-0004](../adr/0004-small-data-by-design.md)).
 - **Terms:** OOI has no open-data licence; use is governed by the OOI Data Use Policy

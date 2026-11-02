@@ -4,7 +4,6 @@
 # Usage: scripts/repo-settings.sh [owner/repo]
 # Needs: the GitHub CLI (gh), authenticated with admin rights on the repository.
 #
-# Later milestones extend this script; GitHub Pages arrives with M0.10 (docs site).
 set -euo pipefail
 
 REPO="${1:-soheil-mp/shoalscope}"
@@ -30,6 +29,14 @@ gh api -X PATCH "repos/${REPO}" --silent -F allow_auto_merge=true
 # Workflows get read-only tokens by default, and may open pull requests (release-please).
 gh api -X PUT "repos/${REPO}/actions/permissions/workflow" --silent \
   -f default_workflow_permissions=read -F can_approve_pull_request_reviews=true
+
+# --- GitHub Pages: the docs workflow builds and deploys the site ---------------------
+if gh api "repos/${REPO}/pages" --silent 2>/dev/null; then
+  gh api -X PUT "repos/${REPO}/pages" --silent -f build_type=workflow
+else
+  gh api -X POST "repos/${REPO}/pages" --silent -f build_type=workflow
+fi
+gh repo edit "${REPO}" --homepage "https://${REPO%%/*}.github.io/${REPO#*/}/"
 
 # --- Labels used by issue forms and Renovate ---------------------------------------
 gh label create spike --repo "${REPO}" --force --color "5319e7" \

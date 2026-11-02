@@ -1,7 +1,7 @@
 # Roadmap
 
 > **Status (2026-11-02):** planning is complete: research, architecture and the first fourteen
-> ADRs are in [`docs/`](docs/). No product code exists yet. The next item is **M0.10**.
+> ADRs are in [`docs/`](docs/). No product code exists yet. The next item is **M1.1**.
 
 Shoalscope is built in eight phases and 26 milestones. A thin end-to-end slice comes first
 (M1), and every later milestone deepens one stage of that slice, so the project works from
@@ -51,7 +51,7 @@ early on and gets better with each step.
 | | [M25 Documentation, write-up and 1.0](#m25--documentation-write-up-and-10) | 25 | v1.0.0 |
 | | **Total** | **916** | |
 
-**Done:** 38 h (M0.1–M0.9, M0.11–M0.12). **Open:** 878 h. With 15 % contingency, that is about 1,030 hours:
+**Done:** 41 h (M0.1–M0.12). **Open:** 875 h. With 15 % contingency, that is about 1,030 hours:
 roughly nine to ten months at 25 hours a week.
 
 ### Indicative schedule
@@ -178,7 +178,7 @@ released automatically.
   `scripts/repo-settings.sh`.
 - [x] **M0.9** (2 h) Extend pre-commit with Ruff, mypy, import-linter, uv-lock, actionlint,
   ShellCheck, hadolint, yamllint, check-jsonschema and Buf.
-- [ ] **M0.10** (3 h) Documentation site with Zensical in the Diátaxis structure (tutorials,
+- [x] **M0.10** (3 h) Documentation site with Zensical in the Diátaxis structure (tutorials,
   how-to guides, reference, explanation), research and ADR pages, deployed to GitHub Pages by a
   workflow.
 - [x] **M0.11** (2 h) Community files: CONTRIBUTING, CODE_OF_CONDUCT, SECURITY (private
@@ -920,4 +920,4 @@ v1.0.0 is tagged with signed artefacts.
 | Date | Items | Hours | Notes |
 | :-- | :-- | --: | :-- |
 | 2026-11-02 | M0.1–M0.4 | 18 | Repository bootstrap, research, ADRs, architecture, roadmap, settings and issue sync |
-| 2026-11-02 | M0.5–M0.9, M0.11–M0.12 | 20 | Engineering foundations: workspace, tooling, CI, docs and release automation |
+| 2026-11-02 | M0.5–M0.12 | 23 | Engineering foundations: workspace, tooling, CI, docs and release automation |

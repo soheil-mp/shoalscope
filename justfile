@@ -54,8 +54,11 @@ peek *args:
 
 # Serve the documentation site locally with live reload
 docs:
-    @echo "Not available yet: the documentation site arrives in roadmap item M0.10." >&2
-    @exit 1
+    uv run --group docs zensical serve
+
+# Build the documentation site in strict mode into site/
+docs-build:
+    uv run --group docs zensical build --strict --clean
 
 # Start the local platform with Docker Compose
 up:

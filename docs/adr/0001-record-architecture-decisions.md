@@ -27,5 +27,5 @@ runtime service, or changes a data format or contract.
 
 ## Confirmation
 
-The definition of done in [ROADMAP.md](../../ROADMAP.md) requires an ADR whenever a recorded
+The definition of done in [ROADMAP.md](https://github.com/soheil-mp/shoalscope/blob/main/ROADMAP.md) requires an ADR whenever a recorded
 decision changes.
