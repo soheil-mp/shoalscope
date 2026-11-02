@@ -174,8 +174,10 @@ sequenceDiagram
   end
 ```
 
-The same planner serves NOAA files (S3 or HTTPS) and the edge's replay mode. When an index is
-missing or inconsistent, a header scan finds ping boundaries instead.
+The same planner serves NOAA files (S3 or HTTPS) and the edge's replay mode. When there is no
+index (the NOAA hake EK80 files) or it is inconsistent, an interpolation search on datagram
+timestamps finds the window: each probe reads 256 KiB and resynchronises on the first datagram
+whose length, type and trailing length agree.
 
 ## 6. Edge path
 
@@ -305,7 +307,7 @@ follows a ping from the edge to its Iceberg row. Service-level objectives:
 | Failure | Detection | Response |
 | :-- | :-- | :-- |
 | Source unreachable or slow | Connector errors, freshness SLO | Backoff and circuit breaker; partition retried by sensor |
-| Index file inconsistent with raw | Framing check on the first datagram of a range | Header-scan fallback; window quarantined if still inconsistent |
+| Index file missing or inconsistent with raw | Framing check on the first datagram of a range | Timestamp search with framing resync; window quarantined if it still does not frame |
 | File still being written | Size or ETag changes between requests | Only process pings older than a safety margin |
 | Budget exceeded | Planner pre-check | Fail closed, ops event, alert |
 | Calibration missing for a period | Calibration resolution | Window quarantined; never processed with silent defaults |

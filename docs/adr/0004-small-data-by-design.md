@@ -26,10 +26,14 @@ downloading them?
 
 Chosen: **option 1**.
 
-- Simrad `.raw` files are length-prefixed datagram streams, and `.idx` files list each ping's
-  byte offset (verified on OOI and NOAA files). Shoalscope reads the index, plans the byte
-  ranges for a time window plus the configuration header, and fetches only those with HTTP
-  range requests (M3.3). A 60-second OOI window is about 2 MB of a 500 MB file.
+- Simrad `.raw` files are length-prefixed datagram streams. Where an `.idx` file exists (OOI,
+  NOAA EK60 cruises), it lists each ping's byte offset: Shoalscope reads the index, plans the
+  byte ranges for a time window plus the configuration header, and fetches only those with
+  HTTP range requests (M3.3). A 60-second OOI window is about 2 MB of a 500 MB file.
+- Where there is no index (the NOAA hake EK80 files), an interpolation search on datagram
+  timestamps locates the window: each probe reads 256 KiB at a byte offset and resynchronises
+  on the first valid datagram, recognised by its length, type and trailing length (M3.11). The
+  derived time-to-offset points are cached, so later windows in the same file are direct.
 - Archives are sampled on a duty cycle (default: 60 s every 30 min), the way autonomous
   echosounders sample the ocean (M10.9).
 - Fetch and storage budgets are set per source, per run and per day. The planner checks the
@@ -43,8 +47,9 @@ Chosen: **option 1**.
 - Good: the same window planner feeds both batch backfills and the edge replay.
 - Bad: duty-cycled results miss events between windows; products state their duty cycle, and
   the edge node (ADR-0008) processes continuously where an instrument is attached.
-- Bad: correctness depends on index files; a fallback scans datagram headers when an index is
-  missing or inconsistent.
+- Bad: window boundaries depend on index files or timestamp search; the framing check on the
+  first datagram of every range catches a wrong offset, and the window is quarantined if it
+  still does not frame.
 
 ## Confirmation
 

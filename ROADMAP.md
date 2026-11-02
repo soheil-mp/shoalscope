@@ -26,7 +26,7 @@ early on and gets better with each step.
 | 0. Foundations | [M0 Engineering foundations](#m0--engineering-foundations) | 41 | |
 | 1. Walking skeleton | [M1 Thin end-to-end slice](#m1--walking-skeleton-thin-end-to-end-slice) | 43 | v0.1.0 |
 | 2. Physics, formats and simulation | [M2 Domain model, units and contracts](#m2--domain-model-units-and-contracts) | 32 | |
-| | [M3 Simrad datagram I/O and byte-range reading](#m3--simrad-datagram-io-and-byte-range-reading) | 41 | |
+| | [M3 Simrad datagram I/O and byte-range reading](#m3--simrad-datagram-io-and-byte-range-reading) | 46 | |
 | | [M4 Physics-based echosounder simulator](#m4--physics-based-echosounder-simulator) | 59 | v0.2.0 |
 | 3. Acoustic processing | [M5 Calibration and environment](#m5--calibration-and-environment) | 36 | |
 | | [M6 Echogram cleaning (L2B)](#m6--echogram-cleaning-l2b) | 33 | |
@@ -49,9 +49,9 @@ early on and gets better with each step.
 | 7. Validation, performance and 1.0 | [M23 Performance and scale](#m23--performance-and-scale) | 23 | |
 | | [M24 Scientific validation and reproducibility](#m24--scientific-validation-and-reproducibility) | 24 | |
 | | [M25 Documentation, write-up and 1.0](#m25--documentation-write-up-and-10) | 25 | v1.0.0 |
-| | **Total** | **911** | |
+| | **Total** | **916** | |
 
-**Done:** 18 h (M0.1–M0.4). **Open:** 893 h. With 15 % contingency, that is about 1,030 hours:
+**Done:** 18 h (M0.1–M0.4). **Open:** 898 h. With 15 % contingency, that is about 1,030 hours:
 roughly nine to ten months at 25 hours a week.
 
 ### Indicative schedule
@@ -66,7 +66,7 @@ gantt
   M1 Walking skeleton         :m1, after m0, 12d
   section Physics and simulation
   M2 Domain and contracts     :m2, after m1, 9d
-  M3 Datagram I/O             :m3, after m2, 11d
+  M3 Datagram I/O             :m3, after m2, 13d
   M4 Simulator                :m4, after m3, 17d
   section Acoustic processing
   M5 Calibration              :m5, after m4, 10d
@@ -292,9 +292,14 @@ over HTTPS and S3, and write valid files for the simulator.
   in CI, never committed): same pings, timestamps and sample counts.
 - [ ] **M3.10** (3 h) Benchmarks of parse throughput and peak memory; a 60-second OOI-sized
   window parses in under one second on a laptop.
+- [ ] **M3.11** (5 h) Index-less windows: interpolation search on datagram timestamps, where
+  each probe reads 256 KiB and resynchronises on the first datagram whose length, type and
+  trailing length agree; derived time-to-offset points cached as a sparse index; tested on the
+  NOAA hake EK80 files, which have no `.idx`.
 
 **Exit criteria:** a 60-second window of a live OOI file is read over HTTPS with less than
-2.5 MB transferred, and echopype converts it to the same values as a local full-file read.
+2.5 MB transferred, and echopype converts it to the same values as a local full-file read; a
+15-second window of an index-less NOAA file is found and read with under 10 MB transferred.
 
 ### M4 · Physics-based echosounder simulator
 
@@ -381,7 +386,8 @@ drives every L2 product, and missing calibrations quarantine windows instead of 
 - [ ] **M6.4** (4 h) Seabed detection with `echopype.mask.detect_seafloor`, a backstep and a
   dead-zone height estimate (Ona & Mitson 1996), and false-bottom detection.
 - [ ] **M6.5** (3 h) Compare the detected seabed with the instrument's own `.bot` line on NOAA
-  windows and with the simulator's truth; report bias and outliers.
+  EK60 windows (for example cruise HB0706) and with the simulator's truth; report bias and
+  outliers.
 - [ ] **M6.6** (3 h) Range exclusions for the near field, the surface bubble layer and
   transducer ring-down, computed from transducer geometry rather than hard-coded.
 - [ ] **M6.7** (3 h) Ping-level quality flags (attenuated, noisy, motion out of limits) carried
@@ -494,8 +500,8 @@ budget ([ADR-0004](docs/adr/0004-small-data-by-design.md)).
 - [ ] **M10.1** (4 h) Source registry: one typed record per source (URLs, terms, citation
   template, budgets, rate limit, schedule) that drives connectors, docs and attribution.
 - [ ] **M10.2** (5 h) NOAA archive connector: anonymous listing by ship, cruise and instrument;
-  window selection by time; index-guided byte ranges; calibration-folder discovery; ETag-based
-  idempotency.
+  window selection by time; index-guided or timestamp-searched byte ranges (M3.3, M3.11);
+  calibration-folder discovery; ETag-based idempotency.
 - [ ] **M10.3** (4 h) NOAA level-2 Zarr reader: find the chunks that overlap a processed window
   through the STAC catalogue and read only those, as an independent reference.
 - [ ] **M10.4** (5 h) OOI raw-archive connector: folder crawling with conditional requests,
@@ -895,7 +901,7 @@ v1.0.0 is tagged with signed artefacts.
 | DuckDB cannot materialise dbt models into the Iceberg catalog | Medium | Medium | Spike in M1.6; PyIceberg-written marts or DuckLake fallback ([ADR-0007](docs/adr/0007-tables-in-iceberg.md)) |
 | OOI or NOAA changes paths, formats or availability | Medium | High | Source registry, connector contract tests, simulator keeps every test independent of live sources |
 | echopype API changes between releases | Medium | Medium | Pinned version, Renovate, conformance suite (M3.9) |
-| Index files inconsistent with raw files | Low | Medium | Framing checks and header-scan fallback (M3.3) |
+| Index files missing or inconsistent with raw files | Medium | Medium | Framing checks on every range and timestamp search with resync (M3.3, M3.11) |
 | Simulator not realistic enough | Medium | Medium | Realism note (M4.12) and real-data agreement checks (M24) |
 | Python 3.13 pin held back by dagster-dbt | Low | Low | Revisit when it supports 3.14 (ADR-0014) |
 | Storage or bandwidth budget exceeded | Low | Medium | Fail-closed budget guard (M10.7) and CI budget of 20 MiB |

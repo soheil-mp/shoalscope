@@ -282,9 +282,11 @@ Two things stand out from this survey:
 ## 15. What Shoalscope adds
 
 1. **Index-guided byte-range ingestion.** Raw Simrad files are sequences of length-prefixed
-   datagrams, and the matching `.idx` files list each ping's byte offset (verified on OOI and
-   NOAA files, see [data sources](02-data-sources.md)). Shoalscope reads only the pings it
-   needs with HTTP range requests: about 2 MB for a 60-second window of a 500 MB file.
+   datagrams. Where an `.idx` file exists (OOI, NOAA EK60 cruises) it lists each ping's byte
+   offset; where it does not (the NOAA hake EK80 files), an interpolation search on datagram
+   timestamps finds a window in a few 256 KiB probes (both verified, see
+   [data sources](02-data-sources.md)). Shoalscope reads only the pings it needs with HTTP
+   range requests: about 2 MB for a 60-second window of a 500 MB file.
 2. **Duty-cycled sampling of archives**, as autonomous echosounders sample the ocean, under
    enforced fetch and storage budgets ([ADR-0004](../adr/0004-small-data-by-design.md)).
 3. **The missing fish algorithms**: split-beam single-target detection with Nv/M diagnostics,

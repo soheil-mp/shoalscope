@@ -9,7 +9,7 @@
 
 | # | Source | Format | Access | Role | Terms |
 | :-- | :-- | :-- | :-- | :-- | :-- |
-| 1 | NOAA NCEI Water-Column Sonar Data Archive (`s3://noaa-wcsd-pds`) | Simrad EK60/EK80 `.raw` with `.idx` and `.bot` sidecars; cruise metadata JSON | Anonymous S3 or HTTPS, byte ranges | Ship-survey fish data (Pacific hake survey 2023), sphere-calibration files | Free use and redistribution; no warranty |
+| 1 | NOAA NCEI Water-Column Sonar Data Archive (`s3://noaa-wcsd-pds`) | Simrad EK60/EK80 `.raw`, with `.idx` and `.bot` sidecars on EK60 cruises and in calibration folders; cruise metadata JSON | Anonymous S3 or HTTPS, byte ranges | Ship-survey fish data (Pacific hake survey 2023), sphere-calibration files | Free use and redistribution; no warranty |
 | 2 | NOAA level-2 Zarr stores (`s3://noaa-wcsd-zarr-pds`) and STAC index (`s3://noaa-wcsd-pds-index`) | Zarr v3, Sv cube `[depth, time, frequency]`; STAC 1.1 | Anonymous HTTPS, chunk by chunk | Independent reference for validating Shoalscope's Sv | STAC collections declare MIT |
 | 3 | OOI raw data archive, Oregon Offshore Cabled Shallow Profiler, 200 m platform (`CE04OSPS/PC01B/ZPLSCB102`) | Simrad EK80 `.raw` + `.idx`, new file about every 3 h 50 min | Anonymous HTTPS, byte ranges | Near-real-time observatory feed; replay source for the edge node | OOI Data Use Policy and User Terms: free use with required citation |
 | 4 | OOI ERDDAP: CTDs on the same platform (`ooi-ce04osps-pc01b-4a-ctdpfa109`, `ooi-ce04osps-sf01b-2a-ctdpfa107`) | ERDDAP tabledap (CSV, Parquet, netCDF) with QARTOD flags | Anonymous HTTPS queries | Temperature and salinity for sound speed and absorption | Free use and redistribution; no warranty |
@@ -32,22 +32,27 @@ fixtures from source 6, and connector tests use a local fake server (M10.10).
 - **Fish-survey example, `Bell_M._Shimada/SH2306`:** the 2023 Joint U.S.–Canada Integrated
   Ecosystem and Pacific Hake Acoustic Trawl Survey (cruise metadata: 2023-06-15 to 2023-09-10,
   "Calibrated w/ calibration data", calibration on 26 June 2023).
-  - `EK80/Hake-D20230804-T152252.raw` and its neighbours are about 100 MiB each and cover about
-    4.5 minutes. The first 1,000 keys alone hold 103.5 GB, so whole-file downloads are out of
-    the question.
+  - `EK80/` holds 3,260 `.raw` files totalling 338.4 GB and **no `.idx` or `.bot` sidecars**.
+    `Hake-D20230804-T152252.raw` is typical: 105,305,912 bytes covering 15:22:52–15:27:12 UTC,
+    about 400 KB per second. Whole-file downloads are out of the question.
   - `EK80_calibration/` holds sphere-calibration raw files (about 100 MiB each) with `.idx`
     (about 70 KiB) and `.bot` (about 79 KiB) sidecars.
   - `metadata/SH2306_EK80-metadata.json` (6 KiB) describes the cruise. **It contains personal
     data**: names, e-mail addresses, phone numbers and street addresses of scientists. The
     connector keeps only allowlisted fields
     ([ADR-0013](../adr/0013-privacy-allowlist-and-attribution.md)).
-- **EK60 example, `Henry_B._Bigelow/HB0706`:** `.raw` files of 95–205 MB with `.idx` and `.bot`
-  sidecars of 250–540 KiB.
+- **EK60 example, `Henry_B._Bigelow/HB0706`:** 53 `.raw` files (95–205 MB each, 10.3 GB in
+  total), each with `.idx` and `.bot` sidecars of 250–540 KiB.
 - **Byte ranges:** a `Range: bytes=0-99` request returns `206 Partial Content` with the full
   size in `Content-Range` (105,305,912 bytes for the file above).
-- **What Shoalscope uses:** a handful of 60-second windows from SH2306 transects, windows from
-  the calibration files for M5.4, and the `.bot` files as the instrument's own seabed line for
-  comparison (M6.5).
+- **Files without an index:** because datagrams are length-prefixed and carry a trailing copy
+  of their length, a 256 KiB probe at any byte offset finds a valid datagram boundary and its
+  timestamp. On the file above, five probes at 0 %, 25 %, 50 %, 75 % and 99 % of its size all
+  resynchronised within 70 KB and returned increasing times, for 1.3 MB transferred. Shoalscope
+  locates a window in such files by interpolation search on timestamps (M3.11).
+- **What Shoalscope uses:** a handful of 15-second windows from SH2306 transects, windows from
+  the calibration files for M5.4, and the HB0706 `.bot` files as the instrument's own seabed line
+  for comparison (M6.5).
 
 ## 2. NOAA level-2 Zarr stores and STAC index
 
@@ -87,10 +92,13 @@ fixtures from source 6, and connector tests use a local fake server (M10.10).
   - datagram types `XML0`, `FIL1` (filter coefficients), `NME0` (NMEA), `MRU0` (motion),
     `RAW3` (sample data) and `RAW4`;
   - the `.idx` file is a stream of 48-byte `IDX0` datagrams, one per ping cycle, each holding
-    the ping time and the byte offset of that ping in the `.raw` file. Offsets advance by about
-    31.7 KB per second.
-- **Consequence:** one second of three-channel data is about 32 KB, so a 60-second window is
-  about 2 MB of a 500 MB file. Shoalscope reads the index, then fetches only the byte ranges it
+    the ping number, distance, position and byte offset of that ping in the `.raw` file; the
+    first ping starts at byte 12,496, right after the configuration header;
+  - one ping cycle (one second, three channels) is 32–39 KB: `MRU0`, two `XML0` ping
+    parameters, `RAW4` and `RAW3`.
+- **Consequence:** a 60-second window is about 2 MB of a 500 MB file.
+  [`examples/peek_raw_window.py`](../../examples/peek_raw_window.py) reproduces this with three
+  range requests (index, header, one ping), 67,612 bytes in total. Shoalscope reads the index, then fetches only the byte ranges it
   needs ([ADR-0004](../adr/0004-small-data-by-design.md)).
 - **Terms:** OOI has no open-data licence; use is governed by the OOI Data Use Policy
   (1102-00010) and User Terms (1102-00020), which require attribution in OOI's citation format.
@@ -132,7 +140,7 @@ the only source of test fixtures and the reference for every accuracy metric
 | :-- | :-- | :-- |
 | OOI `.idx` per file | 756 KiB | Cached, LRU-evicted |
 | OOI 60 s raw window, 3 channels | about 2 MB | Fetched into memory, discarded after L2 |
-| NOAA hake 60 s raw window | about 22 MB (100 MiB per 4.5 min) | Fewer windows per day; fetched into memory |
+| NOAA hake 15 s raw window | about 6 MB (about 400 KB/s) | Located by timestamp search; fetched into memory |
 | NOAA level-2 Zarr chunk | 1 MiB uncompressed | Only chunks overlapping processed windows |
 | CTD day, one platform, 1 per minute | about 1,440 rows | Kept in full (tiny) |
 | ETOPO bounding box | a few KiB | Cached |
