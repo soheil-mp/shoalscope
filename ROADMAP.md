@@ -51,7 +51,7 @@ early on and gets better with each step.
 | | [M25 Documentation, write-up and 1.0](#m25--documentation-write-up-and-10) | 25 | v1.0.0 |
 | | **Total** | **916** | |
 
-**Done:** 27 h (M0.1–M0.7). **Open:** 889 h. With 15 % contingency, that is about 1,030 hours:
+**Done:** 29 h (M0.1–M0.7, M0.9). **Open:** 887 h. With 15 % contingency, that is about 1,030 hours:
 roughly nine to ten months at 25 hours a week.
 
 ### Indicative schedule
@@ -176,7 +176,7 @@ released automatically.
   cache, concurrency groups, read-only default permissions, actions pinned by commit SHA,
   coverage in the job summary and one aggregate `CI passed` check; a `require-ci` ruleset in
   `scripts/repo-settings.sh`.
-- [ ] **M0.9** (2 h) Extend pre-commit with Ruff, mypy, import-linter, uv-lock, actionlint,
+- [x] **M0.9** (2 h) Extend pre-commit with Ruff, mypy, import-linter, uv-lock, actionlint,
   ShellCheck, hadolint, yamllint, check-jsonschema and Buf.
 - [ ] **M0.10** (3 h) Documentation site with Zensical in the Diátaxis structure (tutorials,
   how-to guides, reference, explanation), research and ADR pages, deployed to GitHub Pages by a
@@ -920,4 +920,4 @@ v1.0.0 is tagged with signed artefacts.
 | Date | Items | Hours | Notes |
 | :-- | :-- | --: | :-- |
 | 2026-11-02 | M0.1–M0.4 | 18 | Repository bootstrap, research, ADRs, architecture, roadmap, settings and issue sync |
-| 2026-11-02 | M0.5–M0.7 | 9 | Engineering foundations: workspace, tooling, CI, docs and release automation |
+| 2026-11-02 | M0.5–M0.7, M0.9 | 11 | Engineering foundations: workspace, tooling, CI, docs and release automation |

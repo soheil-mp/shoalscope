@@ -3,8 +3,9 @@
 # Run on everything:
 #   pre-commit run --all-files
 #
-# Code hooks (Ruff, mypy, import-linter, uv-lock, Buf, SQLFluff, actionlint, hadolint)
-# are added with the code they check (roadmap M0.5).
+# Hooks that need the workspace environment (mypy, import-linter, dependency policy) run
+# through `uv run`, so run `just setup` (or `uv sync`) first. SQLFluff is added with the dbt
+# project (M14.1); Buf finds its configuration once proto/ exists (M2.7).
 default_install_hook_types: [pre-commit, commit-msg]
 default_stages: [pre-commit]
 
@@ -47,3 +48,75 @@ repos:
     hooks:
       - id: conventional-pre-commit
         stages: [commit-msg]
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.17.3
+    hooks:
+      - id: ruff-check
+        args: [--fix]
+      - id: ruff-format
+
+  - repo: https://github.com/astral-sh/uv-pre-commit
+    rev: 0.13.6
+    hooks:
+      - id: uv-lock
+
+  - repo: local
+    hooks:
+      - id: mypy
+        name: mypy (strict)
+        entry: uv run --no-sync mypy
+        language: system
+        types: [python]
+        pass_filenames: false
+        require_serial: true
+      - id: import-linter
+        name: import boundaries (import-linter)
+        entry: uv run --no-sync lint-imports
+        language: system
+        types: [python]
+        pass_filenames: false
+      - id: dependency-policy
+        name: dependency licences and no-ML scope (ADR-0002)
+        entry: uv run --no-sync python -m tools.check_dependencies --lock
+        language: system
+        files: ^(uv\.lock|tools/check_dependencies\.py)$
+        pass_filenames: false
+
+  - repo: https://github.com/rhysd/actionlint
+    rev: v1.7.12
+    hooks:
+      - id: actionlint
+
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.11.0.1
+    hooks:
+      - id: shellcheck
+
+  - repo: https://github.com/AleksaC/hadolint-py
+    rev: v2.15.1
+    hooks:
+      - id: hadolint
+
+  - repo: https://github.com/adrienverge/yamllint
+    rev: v1.38.0
+    hooks:
+      - id: yamllint
+
+  - repo: https://github.com/python-jsonschema/check-jsonschema
+    rev: 0.39.0
+    hooks:
+      - id: check-github-workflows
+      - id: check-renovate
+      - id: check-jsonschema
+        name: validate devcontainer.json
+        files: ^\.devcontainer/devcontainer\.json$
+        args:
+          - --schemafile
+          - https://raw.githubusercontent.com/devcontainers/spec/main/schemas/devContainer.base.schema.json
+
+  - repo: https://github.com/bufbuild/buf
+    rev: v1.75.0
+    hooks:
+      - id: buf-lint
+      - id: buf-format
