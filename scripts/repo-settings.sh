@@ -4,8 +4,7 @@
 # Usage: scripts/repo-settings.sh [owner/repo]
 # Needs: the GitHub CLI (gh), authenticated with admin rights on the repository.
 #
-# Later milestones extend this script: GitHub Pages with M0.10 (docs site) and a
-# "require-ci" ruleset with M0.8, once the "CI passed" check exists.
+# Later milestones extend this script; GitHub Pages arrives with M0.10 (docs site).
 set -euo pipefail
 
 REPO="${1:-soheil-mp/shoalscope}"
@@ -82,6 +81,39 @@ apply_ruleset "protect-main" '{
   "rules": [
     { "type": "non_fast_forward" },
     { "type": "deletion" }
+  ]
+}'
+
+# Changes reach main through pull requests that pass CI ("CI passed" aggregates every
+# job) and are merged with a merge commit. Repository admins may bypass, so the sole
+# maintainer can still push small changes directly.
+apply_ruleset "require-ci" '{
+  "name": "require-ci",
+  "target": "branch",
+  "enforcement": "active",
+  "bypass_actors": [
+    { "actor_id": 5, "actor_type": "RepositoryRole", "bypass_mode": "always" }
+  ],
+  "conditions": { "ref_name": { "include": ["~DEFAULT_BRANCH"], "exclude": [] } },
+  "rules": [
+    {
+      "type": "pull_request",
+      "parameters": {
+        "required_approving_review_count": 0,
+        "dismiss_stale_reviews_on_push": true,
+        "require_code_owner_review": false,
+        "require_last_push_approval": false,
+        "required_review_thread_resolution": true,
+        "allowed_merge_methods": ["merge"]
+      }
+    },
+    {
+      "type": "required_status_checks",
+      "parameters": {
+        "strict_required_status_checks_policy": false,
+        "required_status_checks": [{ "context": "CI passed", "integration_id": 15368 }]
+      }
+    }
   ]
 }'
 

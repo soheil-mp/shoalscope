@@ -1,7 +1,7 @@
 # Roadmap
 
 > **Status (2026-11-02):** planning is complete: research, architecture and the first fourteen
-> ADRs are in [`docs/`](docs/). No product code exists yet. The next item is **M0.8**.
+> ADRs are in [`docs/`](docs/). No product code exists yet. The next item is **M0.10**.
 
 Shoalscope is built in eight phases and 26 milestones. A thin end-to-end slice comes first
 (M1), and every later milestone deepens one stage of that slice, so the project works from
@@ -51,7 +51,7 @@ early on and gets better with each step.
 | | [M25 Documentation, write-up and 1.0](#m25--documentation-write-up-and-10) | 25 | v1.0.0 |
 | | **Total** | **916** | |
 
-**Done:** 29 h (M0.1–M0.7, M0.9). **Open:** 887 h. With 15 % contingency, that is about 1,030 hours:
+**Done:** 34 h (M0.1–M0.9). **Open:** 882 h. With 15 % contingency, that is about 1,030 hours:
 roughly nine to ten months at 25 hours a week.
 
 ### Indicative schedule
@@ -172,7 +172,7 @@ released automatically.
 - [x] **M0.7** (3 h) Dependency policy: `tools/check_dependencies.py` fails on licences outside
   the allowlist and on any ML library, model runtime or model API client; runs in pre-commit and
   CI. Renovate: grouped, scheduled, custom managers for pinned tool versions.
-- [ ] **M0.8** (5 h) GitHub Actions CI: lint, type check, hooks and tests (matrix by suite), uv
+- [x] **M0.8** (5 h) GitHub Actions CI: lint, type check, hooks and tests (matrix by suite), uv
   cache, concurrency groups, read-only default permissions, actions pinned by commit SHA,
   coverage in the job summary and one aggregate `CI passed` check; a `require-ci` ruleset in
   `scripts/repo-settings.sh`.
@@ -920,4 +920,4 @@ v1.0.0 is tagged with signed artefacts.
 | Date | Items | Hours | Notes |
 | :-- | :-- | --: | :-- |
 | 2026-11-02 | M0.1–M0.4 | 18 | Repository bootstrap, research, ADRs, architecture, roadmap, settings and issue sync |
-| 2026-11-02 | M0.5–M0.7, M0.9 | 11 | Engineering foundations: workspace, tooling, CI, docs and release automation |
+| 2026-11-02 | M0.5–M0.9 | 16 | Engineering foundations: workspace, tooling, CI, docs and release automation |
