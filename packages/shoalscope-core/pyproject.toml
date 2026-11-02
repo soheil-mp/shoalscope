@@ -1,0 +1,13 @@
+[project]
+name = "shoalscope-core"
+version = "0.0.0"
+description = "Domain types, units, acoustics equations and cited reference tables for all packages."
+readme = "README.md"
+requires-python = ">=3.13,<3.14"
+license = "MIT"
+authors = [{ name = "Soheil Mohammadpour" }]
+dependencies = []
+
+[build-system]
+requires = ["uv_build>=0.11,<0.14"]
+build-backend = "uv_build"

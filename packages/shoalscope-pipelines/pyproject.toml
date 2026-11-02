@@ -1,0 +1,21 @@
+[project]
+name = "shoalscope-pipelines"
+version = "0.0.0"
+description = "Dagster definitions: assets, partitions, sensors, schedules and checks."
+readme = "README.md"
+requires-python = ">=3.13,<3.14"
+license = "MIT"
+authors = [{ name = "Soheil Mohammadpour" }]
+dependencies = ["shoalscope-core", "shoalscope-raw", "shoalscope-sim", "shoalscope-proc", "shoalscope-ingest", "shoalscope-lake"]
+
+[build-system]
+requires = ["uv_build>=0.11,<0.14"]
+build-backend = "uv_build"
+
+[tool.uv.sources]
+shoalscope-core = { workspace = true }
+shoalscope-raw = { workspace = true }
+shoalscope-sim = { workspace = true }
+shoalscope-proc = { workspace = true }
+shoalscope-ingest = { workspace = true }
+shoalscope-lake = { workspace = true }

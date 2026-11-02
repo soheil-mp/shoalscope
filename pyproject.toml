@@ -1,0 +1,242 @@
+[project]
+name = "shoalscope"
+version = "0.0.0"
+description = "Fish monitoring with scientific echosounders: physics-based detection, tracking and counting on a small-data lakehouse platform."
+readme = "README.md"
+requires-python = ">=3.13,<3.14"
+license = "MIT"
+authors = [{ name = "Soheil Mohammadpour" }]
+dependencies = [
+  "shoalscope-api",
+  "shoalscope-core",
+  "shoalscope-edge",
+  "shoalscope-ingest",
+  "shoalscope-lake",
+  "shoalscope-pipelines",
+  "shoalscope-proc",
+  "shoalscope-raw",
+  "shoalscope-sim",
+]
+
+[dependency-groups]
+dev = [
+  "hypothesis>=6.170",
+  "import-linter>=2.15",
+  "mypy>=2.4",
+  "pre-commit>=4.7",
+  "pytest>=9.2",
+  "pytest-cov>=7.1",
+  "ruff>=0.17",
+]
+
+# The workspace root is not a package itself; it ties the members together (ADR-0014).
+[tool.uv]
+package = false
+default-groups = ["dev"]
+
+[tool.uv.workspace]
+members = ["packages/*"]
+
+[tool.uv.sources]
+shoalscope-api = { workspace = true }
+shoalscope-core = { workspace = true }
+shoalscope-edge = { workspace = true }
+shoalscope-ingest = { workspace = true }
+shoalscope-lake = { workspace = true }
+shoalscope-pipelines = { workspace = true }
+shoalscope-proc = { workspace = true }
+shoalscope-raw = { workspace = true }
+shoalscope-sim = { workspace = true }
+
+# --- Ruff -------------------------------------------------------------------------------
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+src = [
+  "packages/shoalscope-core/src",
+  "packages/shoalscope-raw/src",
+  "packages/shoalscope-sim/src",
+  "packages/shoalscope-proc/src",
+  "packages/shoalscope-ingest/src",
+  "packages/shoalscope-lake/src",
+  "packages/shoalscope-edge/src",
+  "packages/shoalscope-pipelines/src",
+  "packages/shoalscope-api/src",
+  "tests",
+  "tools",
+  "scripts",
+]
+extend-exclude = ["examples"]
+
+[tool.ruff.lint]
+select = [
+  "A",    # builtins shadowing
+  "ARG",  # unused arguments
+  "B",    # bugbear
+  "BLE",  # blind except
+  "C4",   # comprehensions
+  "D",    # docstrings
+  "DTZ",  # timezone-aware datetimes
+  "E",    # pycodestyle errors
+  "EM",   # exception messages
+  "ERA",  # commented-out code
+  "F",    # pyflakes
+  "FBT",  # boolean traps
+  "FURB", # refurb
+  "G",    # logging format
+  "I",    # isort
+  "ICN",  # import conventions
+  "LOG",  # logging
+  "N",    # naming
+  "NPY",  # NumPy-specific rules
+  "PERF", # performance
+  "PIE",  # misc
+  "PL",   # pylint
+  "PT",   # pytest style
+  "PTH",  # pathlib
+  "RET",  # returns
+  "RSE",  # raise
+  "RUF",  # ruff-specific
+  "S",    # security (bandit)
+  "SIM",  # simplify
+  "T10",  # debugger
+  "TC",   # type-checking imports
+  "TID",  # tidy imports
+  "TRY",  # exception handling
+  "UP",   # pyupgrade
+  "W",    # pycodestyle warnings
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.flake8-tidy-imports]
+ban-relative-imports = "all"
+
+[tool.ruff.lint.isort]
+known-first-party = ["tools", "scripts"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["D", "S101", "PLR2004", "ARG001"]
+"scripts/**" = ["S603", "S607", "T201"]
+"tools/**" = ["T201"]
+
+[tool.ruff.format]
+docstring-code-format = true
+
+# --- mypy -------------------------------------------------------------------------------
+[tool.mypy]
+python_version = "3.13"
+strict = true
+warn_unreachable = true
+enable_error_code = ["ignore-without-code", "possibly-undefined", "redundant-expr", "truthy-bool"]
+files = ["packages", "tests", "scripts"]
+explicit_package_bases = true
+mypy_path = [
+  "packages/shoalscope-core/src",
+  "packages/shoalscope-raw/src",
+  "packages/shoalscope-sim/src",
+  "packages/shoalscope-proc/src",
+  "packages/shoalscope-ingest/src",
+  "packages/shoalscope-lake/src",
+  "packages/shoalscope-edge/src",
+  "packages/shoalscope-pipelines/src",
+  "packages/shoalscope-api/src",
+]
+
+# --- pytest and coverage ----------------------------------------------------------------
+[tool.pytest.ini_options]
+minversion = "9.0"
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = ["--import-mode=importlib", "--strict-markers", "--strict-config", "-ra"]
+xfail_strict = true
+filterwarnings = ["error"]
+markers = [
+  "integration: needs external services such as containers",
+  "e2e: runs end to end through the local stack",
+  "network: reads public sources over the internet (never in the default run)",
+  "slow: takes more than a few seconds",
+]
+
+[tool.coverage.run]
+branch = true
+source_pkgs = [
+  "shoalscope_core",
+  "shoalscope_raw",
+  "shoalscope_sim",
+  "shoalscope_proc",
+  "shoalscope_ingest",
+  "shoalscope_lake",
+  "shoalscope_edge",
+  "shoalscope_pipelines",
+  "shoalscope_api",
+]
+
+[tool.coverage.report]
+fail_under = 85
+show_missing = true
+skip_covered = true
+exclude_also = ["if TYPE_CHECKING:", "raise NotImplementedError", "@overload"]
+
+# --- Import boundaries (ADR-0014) -------------------------------------------------------
+[tool.importlinter]
+root_packages = [
+  "shoalscope_core",
+  "shoalscope_raw",
+  "shoalscope_sim",
+  "shoalscope_proc",
+  "shoalscope_ingest",
+  "shoalscope_lake",
+  "shoalscope_edge",
+  "shoalscope_pipelines",
+  "shoalscope_api",
+]
+
+[[tool.importlinter.contracts]]
+name = "Core is the foundation and depends on no other Shoalscope package"
+type = "forbidden"
+source_modules = ["shoalscope_core"]
+forbidden_modules = ["shoalscope_raw", "shoalscope_sim", "shoalscope_proc", "shoalscope_ingest", "shoalscope_lake", "shoalscope_edge", "shoalscope_pipelines", "shoalscope_api"]
+
+[[tool.importlinter.contracts]]
+name = "Raw I/O depends only on core"
+type = "forbidden"
+source_modules = ["shoalscope_raw"]
+forbidden_modules = ["shoalscope_sim", "shoalscope_proc", "shoalscope_ingest", "shoalscope_lake", "shoalscope_edge", "shoalscope_pipelines", "shoalscope_api"]
+
+[[tool.importlinter.contracts]]
+name = "The simulator depends only on core and raw I/O"
+type = "forbidden"
+source_modules = ["shoalscope_sim"]
+forbidden_modules = ["shoalscope_proc", "shoalscope_ingest", "shoalscope_lake", "shoalscope_edge", "shoalscope_pipelines", "shoalscope_api"]
+
+[[tool.importlinter.contracts]]
+name = "Processing depends only on core and raw I/O, never on storage, sources or the simulator"
+type = "forbidden"
+source_modules = ["shoalscope_proc"]
+forbidden_modules = ["shoalscope_sim", "shoalscope_ingest", "shoalscope_lake", "shoalscope_edge", "shoalscope_pipelines", "shoalscope_api"]
+
+[[tool.importlinter.contracts]]
+name = "Connectors depend only on core and raw I/O"
+type = "forbidden"
+source_modules = ["shoalscope_ingest"]
+forbidden_modules = ["shoalscope_sim", "shoalscope_proc", "shoalscope_lake", "shoalscope_edge", "shoalscope_pipelines", "shoalscope_api"]
+
+[[tool.importlinter.contracts]]
+name = "Storage depends only on core"
+type = "forbidden"
+source_modules = ["shoalscope_lake"]
+forbidden_modules = ["shoalscope_raw", "shoalscope_sim", "shoalscope_proc", "shoalscope_ingest", "shoalscope_edge", "shoalscope_pipelines", "shoalscope_api"]
+
+[[tool.importlinter.contracts]]
+name = "The edge service runs on the device: core, raw I/O and processing only"
+type = "forbidden"
+source_modules = ["shoalscope_edge"]
+forbidden_modules = ["shoalscope_sim", "shoalscope_ingest", "shoalscope_lake", "shoalscope_pipelines", "shoalscope_api"]
+
+[[tool.importlinter.contracts]]
+name = "The API reads storage only; it never processes, ingests or simulates"
+type = "forbidden"
+source_modules = ["shoalscope_api"]
+forbidden_modules = ["shoalscope_raw", "shoalscope_sim", "shoalscope_proc", "shoalscope_ingest", "shoalscope_edge", "shoalscope_pipelines"]

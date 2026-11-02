@@ -1,0 +1,16 @@
+[project]
+name = "shoalscope-lake"
+version = "0.0.0"
+description = "Icechunk and Iceberg storage, snapshot manifests and the STAC catalogue."
+readme = "README.md"
+requires-python = ">=3.13,<3.14"
+license = "MIT"
+authors = [{ name = "Soheil Mohammadpour" }]
+dependencies = ["shoalscope-core"]
+
+[build-system]
+requires = ["uv_build>=0.11,<0.14"]
+build-backend = "uv_build"
+
+[tool.uv.sources]
+shoalscope-core = { workspace = true }

@@ -1,7 +1,7 @@
 # Roadmap
 
 > **Status (2026-11-02):** planning is complete: research, architecture and the first fourteen
-> ADRs are in [`docs/`](docs/). No product code exists yet. The next item is **M0.5**.
+> ADRs are in [`docs/`](docs/). No product code exists yet. The next item is **M0.6**.
 
 Shoalscope is built in eight phases and 26 milestones. A thin end-to-end slice comes first
 (M1), and every later milestone deepens one stage of that slice, so the project works from
@@ -51,7 +51,7 @@ early on and gets better with each step.
 | | [M25 Documentation, write-up and 1.0](#m25--documentation-write-up-and-10) | 25 | v1.0.0 |
 | | **Total** | **916** | |
 
-**Done:** 18 h (M0.1–M0.4). **Open:** 898 h. With 15 % contingency, that is about 1,030 hours:
+**Done:** 22 h (M0.1–M0.5). **Open:** 894 h. With 15 % contingency, that is about 1,030 hours:
 roughly nine to ten months at 25 hours a week.
 
 ### Indicative schedule
@@ -163,7 +163,7 @@ released automatically.
   protection, private vulnerability reporting and topics.
 - [x] **M0.4** (3 h) Roadmap-to-issues sync (`scripts/sync_roadmap_issues.py`): milestones,
   labels and one issue per open item, idempotent, closes issues for ticked items.
-- [ ] **M0.5** (4 h) uv workspace with the nine packages from
+- [x] **M0.5** (4 h) uv workspace with the nine packages from
   [ADR-0014](docs/adr/0014-python-toolchain-monorepo.md); Python 3.13 pin and `uv.lock`; Ruff,
   mypy (strict), pytest with Hypothesis and branch coverage failing under 85 %; import-linter
   contracts for the dependency rules.
@@ -920,3 +920,4 @@ v1.0.0 is tagged with signed artefacts.
 | Date | Items | Hours | Notes |
 | :-- | :-- | --: | :-- |
 | 2026-11-02 | M0.1–M0.4 | 18 | Repository bootstrap, research, ADRs, architecture, roadmap, settings and issue sync |
+| 2026-11-02 | M0.5 | 4 | Engineering foundations: workspace, tooling, CI, docs and release automation |

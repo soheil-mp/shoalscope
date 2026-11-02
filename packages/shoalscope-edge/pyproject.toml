@@ -1,0 +1,18 @@
+[project]
+name = "shoalscope-edge"
+version = "0.0.0"
+description = "Edge service: streaming processing next to the instrument and a budgeted NATS uplink."
+readme = "README.md"
+requires-python = ">=3.13,<3.14"
+license = "MIT"
+authors = [{ name = "Soheil Mohammadpour" }]
+dependencies = ["shoalscope-core", "shoalscope-raw", "shoalscope-proc"]
+
+[build-system]
+requires = ["uv_build>=0.11,<0.14"]
+build-backend = "uv_build"
+
+[tool.uv.sources]
+shoalscope-core = { workspace = true }
+shoalscope-raw = { workspace = true }
+shoalscope-proc = { workspace = true }

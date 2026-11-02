@@ -1,0 +1,16 @@
+[project]
+name = "shoalscope-raw"
+version = "0.0.0"
+description = "Simrad EK60/EK80 datagram reader and writer, ping indexes and byte-range windows."
+readme = "README.md"
+requires-python = ">=3.13,<3.14"
+license = "MIT"
+authors = [{ name = "Soheil Mohammadpour" }]
+dependencies = ["shoalscope-core"]
+
+[build-system]
+requires = ["uv_build>=0.11,<0.14"]
+build-backend = "uv_build"
+
+[tool.uv.sources]
+shoalscope-core = { workspace = true }
