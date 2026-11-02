@@ -1,0 +1,81 @@
+# Shoalscope task runner. Run `just` to list the recipes.
+# Install just with `uv tool install rust-just` (or your package manager).
+
+set shell := ["bash", "-euo", "pipefail", "-c"]
+set dotenv-load := false
+
+# List the available recipes
+default:
+    @just --list --unsorted
+
+# Install the workspace, development tools and git hooks
+setup:
+    uv sync
+    uv run pre-commit install --hook-type pre-commit --hook-type commit-msg
+
+# Lint, check formatting and import boundaries
+lint:
+    uv run ruff check .
+    uv run ruff format --check .
+    uv run lint-imports
+
+# Format code and apply safe lint fixes
+fmt:
+    uv run ruff format .
+    uv run ruff check --fix .
+
+# Type-check everything in strict mode
+typecheck:
+    uv run mypy
+
+# Run the tests with coverage; extra arguments go to pytest (e.g. `just test -k raw`)
+test *args:
+    uv run pytest --cov --cov-report=term-missing {{ args }}
+
+# Run every pre-commit hook on every file
+hooks:
+    uv run pre-commit run --all-files
+
+# Everything CI checks, in the same order
+check: lint typecheck test
+
+# Show the configured data budgets (ADR-0004)
+budget:
+    @grep -E '^SHOALSCOPE_.*BUDGET' .env 2>/dev/null || grep -E '^SHOALSCOPE_.*BUDGET' .env.example
+
+# Read one ping of a live OOI raw file with three range requests
+peek *args:
+    python3 examples/peek_raw_window.py {{ args }}
+
+# Serve the documentation site locally with live reload
+docs:
+    @echo "Not available yet: the documentation site arrives in roadmap item M0.10." >&2
+    @exit 1
+
+# Start the local platform with Docker Compose
+up:
+    @echo "Not available yet: the Compose stack arrives in roadmap item M1.4." >&2
+    @exit 1
+
+# Stop the local platform
+down:
+    @echo "Not available yet: the Compose stack arrives in roadmap item M1.4." >&2
+    @exit 1
+
+# Simulate, process, store and query one window end to end, checked against ground truth
+e2e:
+    @echo "Not available yet: the end-to-end test arrives in roadmap item M1.10." >&2
+    @exit 1
+
+# Preview the GitHub issue changes implied by ROADMAP.md (add --apply to make them)
+roadmap-sync *args:
+    python3 scripts/sync_roadmap_issues.py {{ args }}
+
+# Apply the repository's GitHub settings
+repo-settings:
+    scripts/repo-settings.sh
+
+# Remove caches and build output
+clean:
+    rm -rf .mypy_cache .pytest_cache .ruff_cache .import_linter_cache .hypothesis .coverage coverage.xml htmlcov dist build site
+    find . -type d -name __pycache__ -not -path "./.venv/*" -prune -exec rm -rf {} +
