@@ -51,7 +51,7 @@ early on and gets better with each step.
 | | [M25 Documentation, write-up and 1.0](#m25--documentation-write-up-and-10) | 25 | v1.0.0 |
 | | **Total** | **916** | |
 
-**Done:** 34 h (M0.1–M0.9). **Open:** 882 h. With 15 % contingency, that is about 1,030 hours:
+**Done:** 36 h (M0.1–M0.9, M0.11). **Open:** 880 h. With 15 % contingency, that is about 1,030 hours:
 roughly nine to ten months at 25 hours a week.
 
 ### Indicative schedule
@@ -181,7 +181,7 @@ released automatically.
 - [ ] **M0.10** (3 h) Documentation site with Zensical in the Diátaxis structure (tutorials,
   how-to guides, reference, explanation), research and ADR pages, deployed to GitHub Pages by a
   workflow.
-- [ ] **M0.11** (2 h) Community files: CONTRIBUTING, CODE_OF_CONDUCT, SECURITY (private
+- [x] **M0.11** (2 h) Community files: CONTRIBUTING, CODE_OF_CONDUCT, SECURITY (private
   vulnerability reporting), issue forms (bug, feature, spike), pull request template and
   CODEOWNERS.
 - [ ] **M0.12** (2 h) Releases: release-please with Conventional Commits, CHANGELOG, and
@@ -920,4 +920,4 @@ v1.0.0 is tagged with signed artefacts.
 | Date | Items | Hours | Notes |
 | :-- | :-- | --: | :-- |
 | 2026-11-02 | M0.1–M0.4 | 18 | Repository bootstrap, research, ADRs, architecture, roadmap, settings and issue sync |
-| 2026-11-02 | M0.5–M0.9 | 16 | Engineering foundations: workspace, tooling, CI, docs and release automation |
+| 2026-11-02 | M0.5–M0.9, M0.11 | 18 | Engineering foundations: workspace, tooling, CI, docs and release automation |
