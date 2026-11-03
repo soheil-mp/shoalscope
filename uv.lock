@@ -1659,6 +1659,12 @@ requires-dist = [
 name = "shoalscope-core"
 version = "0.0.0"
 source = { editable = "packages/shoalscope-core" }
+dependencies = [
+    { name = "numpy" },
+]
+
+[package.metadata]
+requires-dist = [{ name = "numpy", specifier = ">=2.3" }]
 
 [[package]]
 name = "shoalscope-edge"

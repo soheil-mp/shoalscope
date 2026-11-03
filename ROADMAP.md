@@ -52,7 +52,7 @@ early on and gets better with each step.
 | | [M25 Documentation, write-up and 1.0](#m25--documentation-write-up-and-10) | 25 | v1.0.0 |
 | | **Total** | **916** | |
 
-**Done:** 53 h (M0.1–M0.12, M1.1–M1.3). **Open:** 863 h. With 15 % contingency, that is about 1,030 hours:
+**Done:** 57 h (M0.1–M0.12, M1.1–M1.3, M2.3). **Open:** 859 h. With 15 % contingency, that is about 1,030 hours:
 roughly nine to ten months at 25 hours a week.
 
 ### Indicative schedule
@@ -237,7 +237,7 @@ physics that is tested against published numbers.
 - [ ] **M2.2** (3 h) Echolevels vocabulary (L0–L4) and the processing-attribute schema every
   dataset and table carries: level, software version, calibration set, environment profile and
   configuration hash ([ADR-0003](docs/adr/0003-echolevels-as-storage-layers.md)).
-- [ ] **M2.3** (4 h) Units: unit-suffixed names (`range_m`, `sv_db`, `sv_linear_per_m`) and
+- [x] **M2.3** (4 h) Units: unit-suffixed names (`range_m`, `sv_db`, `sv_linear_per_m`) and
   typed decibel and linear wrappers, so means can only be taken in the linear domain; Hypothesis
   round-trip tests.
 - [ ] **M2.4** (4 h) Acoustics library: wavelength, near-field range, range resolution, TVG,
@@ -922,4 +922,4 @@ v1.0.0 is tagged with signed artefacts.
 | :-- | :-- | --: | :-- |
 | 2026-11-02 | M0.1–M0.4 | 18 | Repository bootstrap, research, ADRs, architecture, roadmap, settings and issue sync |
 | 2026-11-02 | M0.5–M0.12, M1.1 | 27 | Engineering foundations complete (workspace, tooling, CI, docs, releases); minimal EK80 simulator |
-| 2026-11-03 | M1.2, M1.3 | 8 | Sv from simulated EK80 files into an Icechunk repository, one commit per window; MVBS and NASC per time cell, NASC rows into a day-partitioned Iceberg table with PyIceberg |
+| 2026-11-03 | M1.2, M1.3, M2.3 | 12 | Sv from simulated EK80 files into an Icechunk repository, one commit per window; MVBS and NASC per time cell, NASC rows into a day-partitioned Iceberg table with PyIceberg; typed decibel and linear units |

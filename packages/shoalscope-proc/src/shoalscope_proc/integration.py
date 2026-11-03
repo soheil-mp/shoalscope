@@ -34,6 +34,7 @@ import numpy as np
 import xarray as xr
 
 from shoalscope_core.tables import NASC_CELLS
+from shoalscope_core.units import Decibels
 
 __all__ = ["NASC_PER_SA", "mvbs", "nasc_rows", "nasc_time_cells"]
 
@@ -103,7 +104,7 @@ def nasc_time_cells(
         raise ValueError(msg)
 
     inside = (echo_range >= range_min_m) & (echo_range < range_max_m) & np.isfinite(sv_db)
-    sv_linear = np.power(10.0, np.where(inside, sv_db, -np.inf) / 10.0)  # 0 outside
+    sv_linear = Decibels(np.where(inside, sv_db, -np.inf)).to_linear().value  # 0 outside
     sa_per_ping = sv_linear.sum(axis=-1) * dr  # (channel, ping)
 
     cell_ns = round(cell_s * 1e9)

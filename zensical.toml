@@ -24,6 +24,7 @@ nav = [
   { "Reference" = [
     { "Commands" = "reference/commands.md" },
     { "Environment variables" = "reference/environment.md" },
+    { "Units and decibels" = "reference/units.md" },
   ] },
   { "Explanation" = [
     { "Architecture" = "architecture.md" },
