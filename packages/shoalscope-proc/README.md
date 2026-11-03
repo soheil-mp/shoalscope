@@ -4,3 +4,9 @@ Acoustic processing L1 to L4: calibration, cleaning, targets, tracks, echo integ
 
 Part of [Shoalscope](../../README.md). Planned work for this package is in
 [ROADMAP.md](../../ROADMAP.md).
+
+## Modules
+
+| Module | What it does |
+| :-- | :-- |
+| `shoalscope_proc.l2a` | L0 → L2A: open an EK80 file with echopype, compute CW Sv with the file's calibration values, write each window as one commit to an Icechunk repository (`l2a/sv/<window_id>`, with the source file's SHA-256) |

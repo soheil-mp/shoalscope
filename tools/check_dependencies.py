@@ -77,7 +77,10 @@ ALIASES = {
 }
 
 # Packages whose metadata is unusable but whose licence was checked by hand.
-EXCEPTIONS: dict[str, str] = {}
+EXCEPTIONS: dict[str, str] = {
+    "icechunk": "Apache-2.0: the wheel's LICENSE file is the Apache License 2.0; its metadata "
+    "declares no licence (checked for 2.3.1 on 2026-11-03)",
+}
 
 # ADR-0002: no machine learning, model runtimes, model APIs or their infrastructure.
 DENIED_ML = frozenset(
