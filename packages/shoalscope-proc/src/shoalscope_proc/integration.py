@@ -26,13 +26,16 @@ definitions and symbols in fisheries acoustics. *ICES Journal of Marine Science*
 from __future__ import annotations
 
 import math
+from datetime import UTC, datetime, timedelta
 from typing import Final
 
 import echopype as ep
 import numpy as np
 import xarray as xr
 
-__all__ = ["NASC_PER_SA", "mvbs", "nasc_time_cells"]
+from shoalscope_core.tables import NASC_CELLS
+
+__all__ = ["NASC_PER_SA", "mvbs", "nasc_rows", "nasc_time_cells"]
 
 NASC_PER_SA: Final = 4.0 * math.pi * 1852.0**2
 """Factor from the area backscattering coefficient sa (m2 m-2) to NASC (m2 nmi-2)."""
@@ -129,3 +132,41 @@ def nasc_time_cells(
             "method": "per-ping sa = sum(sv * dr), linear mean over pings, NASC = 4 pi 1852^2 sa",
         },
     )
+
+
+def nasc_rows(
+    cells: xr.Dataset, *, window_id: str, source_sha256: str, frequency_hz: dict[str, float]
+) -> list[dict[str, object]]:
+    """Rows of the ``l4.nasc_cells`` contract (:data:`shoalscope_core.tables.NASC_CELLS`).
+
+    Args:
+        cells: Output of :func:`nasc_time_cells`.
+        window_id: Window the cells came from.
+        source_sha256: SHA-256 of the raw file.
+        frequency_hz: Nominal frequency of each channel.
+    """
+    width = timedelta(seconds=float(cells.attrs["cell_s"]))
+    rows: list[dict[str, object]] = []
+    for c, channel in enumerate(cells["channel"].values.tolist()):
+        for k, start_ns in enumerate(
+            cells["cell_start"].values.astype("datetime64[ns]").astype(np.int64)
+        ):
+            start = datetime.fromtimestamp(0, tz=UTC) + timedelta(
+                microseconds=int(start_ns) // 1_000
+            )
+            rows.append(
+                {
+                    "window_id": window_id,
+                    "channel_id": str(channel),
+                    "frequency_hz": float(frequency_hz[str(channel)]),
+                    "cell_start": start,
+                    "cell_end": start + width,
+                    "range_min_m": float(cells.attrs["range_min_m"]),
+                    "range_max_m": float(cells.attrs["range_max_m"]),
+                    "nasc_m2_per_nmi2": float(cells["nasc_m2_per_nmi2"].values[c, k]),
+                    "n_pings": int(cells["n_pings"].values[k]),
+                    "source_sha256": source_sha256,
+                }
+            )
+    assert all(tuple(r) == NASC_CELLS.names for r in rows)  # noqa: S101 - contract invariant
+    return rows

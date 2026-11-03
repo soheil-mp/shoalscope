@@ -52,7 +52,7 @@ early on and gets better with each step.
 | | [M25 Documentation, write-up and 1.0](#m25--documentation-write-up-and-10) | 25 | v1.0.0 |
 | | **Total** | **916** | |
 
-**Done:** 49 h (M0.1–M0.12, M1.1–M1.2). **Open:** 867 h. With 15 % contingency, that is about 1,030 hours:
+**Done:** 53 h (M0.1–M0.12, M1.1–M1.3). **Open:** 863 h. With 15 % contingency, that is about 1,030 hours:
 roughly nine to ten months at 25 hours a week.
 
 ### Indicative schedule
@@ -203,7 +203,7 @@ command, from synthetic raw bytes to a number in an API and a chart.
   written as an EK80-style CW raw file that echopype opens; ground truth as Parquet.
 - [x] **M1.2** (4 h) Minimal L0 → L2A: open the file with echopype, compute Sv with the file's
   calibration values, write the window to an Icechunk repository on local disk.
-- [ ] **M1.3** (4 h) Minimal L3/L4: MVBS on a fixed grid and NASC per time cell with
+- [x] **M1.3** (4 h) Minimal L3/L4: MVBS on a fixed grid and NASC per time cell with
   `echopype.commongrid`; NASC rows appended to an Iceberg table with PyIceberg.
 - [ ] **M1.4** (5 h) Local platform in Docker Compose: SeaweedFS, PostgreSQL, Lakekeeper with
   a bootstrapped warehouse, Dagster webserver and daemon; health checks; `just up`.
@@ -922,4 +922,4 @@ v1.0.0 is tagged with signed artefacts.
 | :-- | :-- | --: | :-- |
 | 2026-11-02 | M0.1–M0.4 | 18 | Repository bootstrap, research, ADRs, architecture, roadmap, settings and issue sync |
 | 2026-11-02 | M0.5–M0.12, M1.1 | 27 | Engineering foundations complete (workspace, tooling, CI, docs, releases); minimal EK80 simulator |
-| 2026-11-03 | M1.2 | 4 | Sv from simulated EK80 files into an Icechunk repository, one commit per window |
+| 2026-11-03 | M1.2, M1.3 | 8 | Sv from simulated EK80 files into an Icechunk repository, one commit per window; MVBS and NASC per time cell, NASC rows into a day-partitioned Iceberg table with PyIceberg |

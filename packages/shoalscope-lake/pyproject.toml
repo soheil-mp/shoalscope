@@ -7,7 +7,7 @@ requires-python = ">=3.13,<3.14"
 license = "MIT"
 authors = [{ name = "Soheil Mohammadpour" }]
 dependencies = [
-    "pyiceberg[pyarrow,sql-sqlite]>=0.12",
+    "pyiceberg[pyarrow,pyiceberg-core,sql-sqlite]>=0.12",
     "shoalscope-core",
 ]
 
