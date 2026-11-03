@@ -1,6 +1,6 @@
 [project]
 name = "shoalscope-ingest"
-version = "0.0.0"
+version = "0.1.0"
 description = "Source connectors, duty-cycled window sampling, data budgets and the source registry."
 readme = "README.md"
 requires-python = ">=3.13,<3.14"

@@ -1,6 +1,6 @@
 [project]
 name = "shoalscope-edge"
-version = "0.0.0"
+version = "0.1.0"
 description = "Edge service: streaming processing next to the instrument and a budgeted NATS uplink."
 readme = "README.md"
 requires-python = ">=3.13,<3.14"

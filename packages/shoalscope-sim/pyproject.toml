@@ -1,6 +1,6 @@
 [project]
 name = "shoalscope-sim"
-version = "0.0.0"
+version = "0.1.0"
 description = "Physics-based split-beam echosounder simulator with exact ground truth."
 readme = "README.md"
 requires-python = ">=3.13,<3.14"
