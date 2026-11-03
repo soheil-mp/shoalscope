@@ -1,6 +1,6 @@
 [project]
 name = "shoalscope-api"
-version = "0.0.0"
+version = "0.1.0"
 description = "Read API, OGC API - EDR, Zarr over HTTP and standard exports."
 readme = "README.md"
 requires-python = ">=3.13,<3.14"

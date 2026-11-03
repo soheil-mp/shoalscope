@@ -1,6 +1,6 @@
 [project]
 name = "shoalscope-pipelines"
-version = "0.0.0"
+version = "0.1.0"
 description = "Dagster definitions: assets, partitions, sensors, schedules and checks."
 readme = "README.md"
 requires-python = ">=3.13,<3.14"

@@ -1,20 +1,21 @@
 cff-version: 1.2.0
 message: If you use Shoalscope, please cite it using the metadata below.
 type: software
-title: "Shoalscope: fish monitoring with scientific echosounders"
+title: 'Shoalscope: fish monitoring with scientific echosounders'
 abstract: >-
-  Shoalscope turns raw split-beam echosounder data into fish targets, tracks, passage counts,
-  densities, school catalogues and diel-migration metrics with physics-based, rule-based methods
-  (calibrated sonar equations, published noise removal, split-beam single-target detection,
-  Kalman tracking and echo integration). It reads public observatory and survey archives through
-  index-guided byte ranges and stores versioned, traceable products in an Icechunk and Apache
-  Iceberg lakehouse.
+  Shoalscope turns raw split-beam echosounder data into fish targets, tracks,
+  passage counts, densities, school catalogues and diel-migration metrics with
+  physics-based, rule-based methods (calibrated sonar equations, published noise
+  removal, split-beam single-target detection, Kalman tracking and echo
+  integration). It reads public observatory and survey archives through
+  index-guided byte ranges and stores versioned, traceable products in an
+  Icechunk and Apache Iceberg lakehouse.
 authors:
   - family-names: Mohammadpour
     given-names: Soheil
 repository-code: https://github.com/soheil-mp/shoalscope
 license: MIT
-version: 0.0.0
+version: 0.1.0
 keywords:
   - fisheries acoustics
   - echosounder

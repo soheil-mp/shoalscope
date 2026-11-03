@@ -1,6 +1,6 @@
 [project]
 name = "shoalscope-core"
-version = "0.0.0"
+version = "0.1.0"
 description = "Domain types, units, acoustics equations and cited reference tables for all packages."
 readme = "README.md"
 requires-python = ">=3.13,<3.14"

@@ -1,6 +1,6 @@
 [project]
 name = "shoalscope-raw"
-version = "0.0.0"
+version = "0.1.0"
 description = "Simrad EK60/EK80 datagram reader and writer, ping indexes and byte-range windows."
 readme = "README.md"
 requires-python = ">=3.13,<3.14"
