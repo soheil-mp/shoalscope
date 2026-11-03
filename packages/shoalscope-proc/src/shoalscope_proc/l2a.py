@@ -14,13 +14,16 @@ from __future__ import annotations
 
 import hashlib
 import re
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
+from importlib.metadata import version
 from typing import TYPE_CHECKING, Final
 
 import echopype as ep
 import icechunk
 import icechunk.xarray
 import xarray as xr
+
+from shoalscope_core.levels import Level, ProcessingAttributes, configuration_hash
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -30,6 +33,7 @@ __all__ = [
     "EnvironmentOverride",
     "WindowWrite",
     "compute_sv",
+    "l2a_attributes",
     "open_repository",
     "read_window",
     "write_window",
@@ -64,6 +68,28 @@ class WindowWrite:
     snapshot_id: str
     source_sha256: str
     n_pings: int
+
+
+def l2a_attributes(environment: EnvironmentOverride | None = None) -> ProcessingAttributes:
+    """Processing attributes of Sv computed by :func:`compute_sv` (ADR-0003)."""
+    configuration: dict[str, object] = {
+        "function": "echopype.calibrate.compute_Sv",
+        "echopype_version": version("echopype"),
+        "waveform_mode": "CW",
+        "encode_mode": "power",
+        "environment": asdict(environment) if environment else "file",
+    }
+    profile = "file"
+    if environment is not None:
+        c, alpha = environment.sound_speed_mps, environment.absorption_db_per_m
+        profile = f"constant:c={c}mps,alpha={alpha}dbpm"
+    return ProcessingAttributes(
+        level=Level.L2A,
+        software_version=version("shoalscope-proc"),
+        calibration_set="file",
+        environment_profile=profile,
+        configuration_hash=configuration_hash(configuration),
+    )
 
 
 def compute_sv(raw_path: Path, *, environment: EnvironmentOverride | None = None) -> xr.Dataset:
@@ -116,18 +142,20 @@ def _chunked(sv: xr.Dataset) -> xr.Dataset:
     return sv.chunk({"ping_time": pings})
 
 
-def write_window(
+def write_window(  # noqa: PLR0913 - the window, its data and where it goes
     repo: icechunk.Repository,
     window_id: str,
     raw_path: Path,
     sv: xr.Dataset,
     *,
+    attributes: ProcessingAttributes,
     branch: str = "main",
 ) -> WindowWrite:
     """Write one window of Sv to its own group and commit it.
 
     Writing the same window again replaces its group in a new commit; earlier commits keep the
-    old version.
+    old version. The group's attributes carry the processing attributes (ADR-0003), the window
+    id and the source file with its SHA-256.
 
     Raises:
         ValueError: If the window id is not a safe group name.
@@ -139,11 +167,10 @@ def write_window(
     source = _sha256(raw_path)
     dataset = sv[["Sv", "echo_range"]].assign_attrs(
         {
-            "shoalscope_level": "L2A",
+            **attributes.to_metadata(),
             "shoalscope_window_id": window_id,
             "shoalscope_source_file": raw_path.name,
             "shoalscope_source_sha256": source,
-            "shoalscope_calibration": "echopype compute_Sv, CW, power, file calibration values",
         }
     )
     session = repo.writable_session(branch)

@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING
 import pytest
 from pyiceberg.transforms import DayTransform
 
+from shoalscope_core.levels import Level, ProcessingAttributes
 from shoalscope_core.tables import NASC_CELLS
 from shoalscope_lake.iceberg import (
     arrow_schema,
@@ -16,8 +17,8 @@ from shoalscope_lake.iceberg import (
     local_catalog,
     replace_window,
 )
-from shoalscope_proc.integration import nasc_rows, nasc_time_cells
-from shoalscope_proc.l2a import EnvironmentOverride, compute_sv
+from shoalscope_proc.integration import l4_attributes, nasc_rows, nasc_time_cells
+from shoalscope_proc.l2a import EnvironmentOverride, compute_sv, l2a_attributes
 from shoalscope_sim.minimal import DEFAULT_CHANNEL, MinimalScenario, simulate
 
 if TYPE_CHECKING:
@@ -92,12 +93,10 @@ def test_rejects_rows_that_break_the_contract(
 def test_simulated_window_end_to_end(tmp_path: Path) -> None:
     scenario = MinimalScenario()
     result = simulate(scenario, tmp_path / "sim.raw", tmp_path / "truth.parquet")
-    sv = compute_sv(
-        result.raw_path,
-        environment=EnvironmentOverride(
-            scenario.environment.sound_speed_mps, scenario.absorption_db_per_m
-        ),
+    environment = EnvironmentOverride(
+        scenario.environment.sound_speed_mps, scenario.absorption_db_per_m
     )
+    sv = compute_sv(result.raw_path, environment=environment)
     cells = nasc_time_cells(sv, cell_s=10.0, range_min_m=1.0)
     rows = nasc_rows(
         cells,
@@ -109,8 +108,16 @@ def test_simulated_window_end_to_end(tmp_path: Path) -> None:
     assert rows[1]["cell_start"] == T0 + timedelta(seconds=10)
     with local_catalog(tmp_path / "lake") as catalog:
         table = ensure_table(catalog, NASC_CELLS)
-        replace_window(table, NASC_CELLS, "sim-0001", rows)
-        stored = table.refresh().scan().to_arrow().sort_by("cell_start").to_pylist()
+        attributes = l4_attributes(cells, l2a_attributes(environment))
+        replace_window(table, NASC_CELLS, "sim-0001", rows, properties=attributes.to_metadata())
+        table = table.refresh()
+        stored = table.scan().to_arrow().sort_by("cell_start").to_pylist()
+        snapshot = table.current_snapshot()
+        assert snapshot is not None
+        assert snapshot.summary is not None
+        recorded = ProcessingAttributes.from_metadata(snapshot.summary.additional_properties)
+        assert recorded == attributes
+        assert recorded.level is Level.L4
     assert [r["nasc_m2_per_nmi2"] for r in stored] == pytest.approx(
         cells["nasc_m2_per_nmi2"].values[0].tolist()
     )

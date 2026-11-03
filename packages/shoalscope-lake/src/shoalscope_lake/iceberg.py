@@ -25,7 +25,7 @@ from pyiceberg.transforms import DayTransform
 from pyiceberg.types import DoubleType, IntegerType, NestedField, StringType, TimestamptzType
 
 if TYPE_CHECKING:
-    from collections.abc import Iterator, Sequence
+    from collections.abc import Iterator, Mapping, Sequence
     from pathlib import Path
 
     from pyiceberg.catalog import Catalog
@@ -117,9 +117,17 @@ def ensure_table(catalog: Catalog, contract: TableContract) -> Table:
 
 
 def replace_window(
-    table: Table, contract: TableContract, window_id: str, rows: Sequence[dict[str, object]]
+    table: Table,
+    contract: TableContract,
+    window_id: str,
+    rows: Sequence[dict[str, object]],
+    *,
+    properties: Mapping[str, str] | None = None,
 ) -> int:
     """Replace every row of ``window_id`` with ``rows`` in one snapshot; returns its id.
+
+    ``properties`` become the snapshot's summary properties; pass the processing attributes
+    (``ProcessingAttributes.to_metadata()``, ADR-0003) so every write records how it was made.
 
     Raises:
         ValueError: If a row does not have exactly the contract's columns or names another
@@ -137,7 +145,9 @@ def replace_window(
     with warnings.catch_warnings():
         # The first write of a window has nothing to replace; PyIceberg warns about that.
         warnings.filterwarnings("ignore", "Delete operation did not match any records")
-        table.overwrite(data, overwrite_filter=same_window)
+        table.overwrite(
+            data, overwrite_filter=same_window, snapshot_properties=dict(properties or {})
+        )
     snapshot = table.current_snapshot()
     if snapshot is None:  # pragma: no cover - overwrite always creates a snapshot
         msg = "the write created no snapshot"

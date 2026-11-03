@@ -9,10 +9,12 @@ import numpy as np
 import pyarrow.parquet as pq
 import pytest
 
+from shoalscope_core.levels import Level, ProcessingAttributes
 from shoalscope_proc.l2a import (
     L2A_GROUP,
     EnvironmentOverride,
     compute_sv,
+    l2a_attributes,
     open_repository,
     read_window,
     write_window,
@@ -95,14 +97,14 @@ def test_window_round_trips_through_icechunk(
 ) -> None:
     _, raw, _, sv = window
     repo = open_repository(tmp_path / "repo")
-    written = write_window(repo, "sim-0001", raw, sv)
+    written = write_window(repo, "sim-0001", raw, sv, attributes=l2a_attributes())
     assert written.group == f"{L2A_GROUP}/sim-0001"
     assert written.n_pings == sv.sizes["ping_time"]
     assert len(written.source_sha256) == 64
     stored = read_window(repo, "sim-0001")
     np.testing.assert_array_equal(stored["Sv"].values, sv["Sv"].values)
     np.testing.assert_array_equal(stored["echo_range"].values, sv["echo_range"].values)
-    assert stored.attrs["shoalscope_level"] == "L2A"
+    assert ProcessingAttributes.from_metadata(stored.attrs) == l2a_attributes()
     assert stored.attrs["shoalscope_source_sha256"] == written.source_sha256
 
 
@@ -111,8 +113,8 @@ def test_every_window_is_one_commit_and_history_is_kept(
 ) -> None:
     _, raw, _, sv = window
     repo = open_repository(tmp_path / "repo")
-    first = write_window(repo, "a", raw, sv)
-    second = write_window(repo, "a", raw, sv.assign(Sv=sv["Sv"] + 1.0))
+    first = write_window(repo, "a", raw, sv, attributes=l2a_attributes())
+    second = write_window(repo, "a", raw, sv.assign(Sv=sv["Sv"] + 1.0), attributes=l2a_attributes())
     assert first.snapshot_id != second.snapshot_id
     messages = [s.message for s in repo.ancestry(branch="main")]
     assert messages[0].startswith("L2A Sv window a from sim.raw")
@@ -132,4 +134,16 @@ def test_rejects_unsafe_window_ids(
 ) -> None:
     _, raw, _, sv = window
     with pytest.raises(ValueError, match="window_id"):
-        write_window(open_repository(tmp_path / "repo"), window_id, raw, sv)
+        write_window(
+            open_repository(tmp_path / "repo"), window_id, raw, sv, attributes=l2a_attributes()
+        )
+
+
+def test_l2a_attributes_describe_the_calibration() -> None:
+    from_file = l2a_attributes()
+    override = l2a_attributes(EnvironmentOverride(1500.0, 0.01))
+    assert from_file.level is Level.L2A
+    assert (from_file.calibration_set, from_file.environment_profile) == ("file", "file")
+    assert override.environment_profile == "constant:c=1500.0mps,alpha=0.01dbpm"
+    assert override.configuration_hash != from_file.configuration_hash
+    assert l2a_attributes() == from_file

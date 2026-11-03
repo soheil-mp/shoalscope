@@ -1,8 +1,9 @@
 # Roadmap
 
-> **Status (2026-11-02):** the engineering foundations (M0) are complete, and the walking
-> skeleton (M1) has started: the minimal simulator writes EK80 files that echopype reads and
-> calibrates back to the inserted target strengths. The next item is **M1.2**.
+> **Status (2026-11-03):** the engineering foundations (M0) are complete. In the walking
+> skeleton (M1), simulated EK80 files become calibrated Sv in Icechunk and NASC cells in an
+> Iceberg table, checked against the simulator's ground truth (M1.1–M1.3). The next item is
+> **M1.4**, the local platform in Docker Compose.
 
 Shoalscope is built in eight phases and 26 milestones. A thin end-to-end slice comes first
 (M1), and every later milestone deepens one stage of that slice, so the project works from
@@ -52,7 +53,7 @@ early on and gets better with each step.
 | | [M25 Documentation, write-up and 1.0](#m25--documentation-write-up-and-10) | 25 | v1.0.0 |
 | | **Total** | **916** | |
 
-**Done:** 57 h (M0.1–M0.12, M1.1–M1.3, M2.3). **Open:** 859 h. With 15 % contingency, that is about 1,030 hours:
+**Done:** 60 h (M0.1–M0.12, M1.1–M1.3, M2.2–M2.3). **Open:** 856 h. With 15 % contingency, that is about 1,030 hours:
 roughly nine to ten months at 25 hours a week.
 
 ### Indicative schedule
@@ -234,7 +235,7 @@ physics that is tested against published numbers.
 - [ ] **M2.1** (4 h) Domain types: platform, deployment, transducer, channel, ping window,
   calibration set, environment profile, target, track, cell and school; immutable dataclasses
   with validation; typed IDs.
-- [ ] **M2.2** (3 h) Echolevels vocabulary (L0–L4) and the processing-attribute schema every
+- [x] **M2.2** (3 h) Echolevels vocabulary (L0–L4) and the processing-attribute schema every
   dataset and table carries: level, software version, calibration set, environment profile and
   configuration hash ([ADR-0003](docs/adr/0003-echolevels-as-storage-layers.md)).
 - [x] **M2.3** (4 h) Units: unit-suffixed names (`range_m`, `sv_db`, `sv_linear_per_m`) and
@@ -922,4 +923,4 @@ v1.0.0 is tagged with signed artefacts.
 | :-- | :-- | --: | :-- |
 | 2026-11-02 | M0.1–M0.4 | 18 | Repository bootstrap, research, ADRs, architecture, roadmap, settings and issue sync |
 | 2026-11-02 | M0.5–M0.12, M1.1 | 27 | Engineering foundations complete (workspace, tooling, CI, docs, releases); minimal EK80 simulator |
-| 2026-11-03 | M1.2, M1.3, M2.3 | 12 | Sv from simulated EK80 files into an Icechunk repository, one commit per window; MVBS and NASC per time cell, NASC rows into a day-partitioned Iceberg table with PyIceberg; typed decibel and linear units |
+| 2026-11-03 | M1.2, M1.3, M2.2, M2.3 | 15 | Sv from simulated EK80 files into an Icechunk repository, one commit per window; MVBS and NASC per time cell, NASC rows into a day-partitioned Iceberg table with PyIceberg; typed decibel and linear units; Echolevels vocabulary and processing attributes on every dataset and snapshot |

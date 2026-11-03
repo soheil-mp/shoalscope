@@ -33,10 +33,11 @@ import echopype as ep
 import numpy as np
 import xarray as xr
 
+from shoalscope_core.levels import Level, ProcessingAttributes, configuration_hash
 from shoalscope_core.tables import NASC_CELLS
 from shoalscope_core.units import Decibels
 
-__all__ = ["NASC_PER_SA", "mvbs", "nasc_rows", "nasc_time_cells"]
+__all__ = ["NASC_PER_SA", "l4_attributes", "mvbs", "nasc_rows", "nasc_time_cells"]
 
 NASC_PER_SA: Final = 4.0 * math.pi * 1852.0**2
 """Factor from the area backscattering coefficient sa (m2 m-2) to NASC (m2 nmi-2)."""
@@ -171,3 +172,19 @@ def nasc_rows(
             )
     assert all(tuple(r) == NASC_CELLS.names for r in rows)  # noqa: S101 - contract invariant
     return rows
+
+
+def l4_attributes(cells: xr.Dataset, sv_attributes: ProcessingAttributes) -> ProcessingAttributes:
+    """Processing attributes of NASC cells computed from Sv with ``sv_attributes``."""
+    configuration = {
+        "function": "shoalscope_proc.integration.nasc_time_cells",
+        "upstream": sv_attributes.configuration_hash,
+        **{k: float(v) for k, v in cells.attrs.items() if isinstance(v, (int, float))},
+    }
+    return ProcessingAttributes(
+        level=Level.L4,
+        software_version=sv_attributes.software_version,
+        calibration_set=sv_attributes.calibration_set,
+        environment_profile=sv_attributes.environment_profile,
+        configuration_hash=configuration_hash(configuration),
+    )
